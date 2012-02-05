@@ -2,6 +2,7 @@ body {
   margin: 0;
   padding: 40px;
   font-family: 'Helvetica Neue', Verdana;
+  background: url(bg.png);
 }
 
 h1 {
@@ -40,15 +41,36 @@ label {
 }
 
 input {
-  font-size: 14px;
+
+}
+
+input[type=number] {
+  font-size: 10px;
 }
 
 input[type=range] {
   vertical-align: sub;
 }
 
+input[type=range]:disabled {
+  opacity: 0.5;
+}
+
+select, input[type=range] {
+  width: 130px;
+}
+
+select, input[type=number] {
+  margin: 3px 0 8px 0;
+  font-size: 10px;
+}
+
+input[type=number] {
+  text-align: right;
+}
+
 button {
-  margin-top: 15px;
+  margin-top: 10px;
   display: block;
 }
 
@@ -64,5 +86,5 @@ button {
 
 .video {
   display: block;
-  margin-top: 600px;
+  margin-top: 400px;
 }
