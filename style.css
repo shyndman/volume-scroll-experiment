@@ -12,6 +12,22 @@ h1 {
   margin: 0;
 }
 
+h1 > a {
+  font-weight: normal;
+  font-size: 11px;
+}
+
+h2 {
+  font-size: 12px;
+  padding-left: 4px;
+  margin: 0;
+}
+
+h2 > a {
+  font-weight: normal;
+  font-size: 11px;
+}
+
 h3 {
   margin: 0;
   font-size: 11px;
