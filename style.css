@@ -7,6 +7,14 @@ body {
   background: url(bg.png);
 }
 
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
 h1 {
   margin-top: 0;
   margin: 0;
