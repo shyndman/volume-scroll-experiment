@@ -3,8 +3,9 @@
   // Constants
   //
 
-  var VIDEO_WIDTH = "480";
-  var VIDEO_HEIGHT = "300";
+  var VIDEO_WIDTH = 480;
+  var VIDEO_HEIGHT = 300;
+  var VIDEO_HALF_HEIGHT = VIDEO_HEIGHT / 2;
   var RECALCULATE_INTERVAL = 100;
 
   // Define the videos to be displayed
@@ -13,7 +14,17 @@
     "9JnjOb4Qu0k",
     "-FpA77S7r7c",
     "mQI6r_kc3ZE",
-    "9hBpF_Zj4OA"
+    "pmfHHLfbjNQ", // Big Ideas: Don't Get Any
+    "9hBpF_Zj4OA"  // Rotate
+  ];
+
+  // To adjust some of the videos that are too loud
+  var VOLUME_LEVELING = [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    0.2
   ];
 
 
@@ -25,26 +36,47 @@
   var invalidated = false;
   var videoElements = [];
   var players = [];
+  var viewportHalfHeight = window.innerHeight / 2;
   var videosContainer = $('#videos');
   var videoDistanceCtrl = $('#video-distance');
+  var videoDistanceDisplay = $('#video-distance-display');
   var audibleDistanceCtrl = $('#audible-distance');
   var audibleDistance = audibleDistanceCtrl.val();
-
+  var audibleDistanceDisplay = $('#audible-distance-display');
+  var minVolumeCtrl = $('#min-volume');
+  var minVolume = minVolumeCtrl.val();
 
   //
   // Volume control
   //
 
+  // Returns an integer from 0 to 100 based on the provided distance
+  var volumeFunction = function(distance, level) {
+    var diff = audibleDistance - distance;
+
+    if (diff < 0)
+      return minVolume;
+
+    var volume = Math.round(level * ((diff / audibleDistance) * (100 - minVolume) + minVolume));
+    return volume;
+  };
+
   // Determines the volume for each video based on distance from the screen.
   var recalculateVolume = function() {
     if (!ready || !invalidated) return;
 
-    console.log('recalculateVolume')
+    console.log('Recalculating volume');
+
+    // Determine distances from the center of the screen
+    for (var i = 0, len = videoElements.length; i < len; i++) {
+      var distance = Math.abs((videoElements[i].offsetTop + VIDEO_HALF_HEIGHT) - (window.scrollY + viewportHalfHeight));
+      players[i].setVolume(volumeFunction(distance, VOLUME_LEVELING[i]));
+    }
 
     invalidated = false;
   };
 
-  setInterval(RECALCULATE_INTERVAL, recalculateVolume);
+  setInterval(recalculateVolume, RECALCULATE_INTERVAL);
 
 
   //
@@ -54,8 +86,7 @@
   var animateDistance = function() {
     var distance = videoDistanceCtrl.val();
 
-    var animatedVideos = $('.video:first-child').nextAll()
-
+    var animatedVideos = $('.video');
     var animationOptions = {
       duration: 'slow',
       step: function() {
@@ -70,8 +101,17 @@
 
 
   //
-  // Controls
+  // Handling events
   //
+
+  $(window).bind('scroll', function() {
+    invalidated = true;
+  });
+
+  $(window).bind('resize', function() {
+    viewportHalfHeight = window.innerHeight / 2;
+    invalidated = true;
+  });
 
   // Invoked on every numeric change in the distance input. Begins a wait
   // timer internally to begin the animation
@@ -79,19 +119,29 @@
 
   // Invoked when the video distance control changes its value
   var distanceInputChange = function() {
+    videoDistanceDisplay.text(videoDistanceCtrl.val());
     clearTimeout(timerId);
     timerId = setTimeout(animateDistance, 1000);
   };
 
-  $('#video-distance').bind('input', distanceInputChange);
+  videoDistanceCtrl.bind('input', distanceInputChange);
 
   // Invoked when the audible distance control changes its value
   var audibleDistanceInputChanged = function() {
     audibleDistance = audibleDistanceCtrl.val();
+    audibleDistanceDisplay.text(audibleDistance);
     invalidated = true;
   };
 
   audibleDistanceCtrl.bind('input', audibleDistanceInputChanged);
+
+  // Invoked when the minimum volume control changes its value
+  var minVolumeChanged = function() {
+    minVolume = minVolumeCtrl.val();
+    invalidated = true;
+  };
+
+  minVolumeCtrl.bind('input', minVolumeChanged);
 
   // Invoked when the begin button is pressed
   var beginPressed = function() {
@@ -112,8 +162,7 @@
     console.log('Videos ready');
 
     $('.hint').hide();
-    $('#begin').removeAttr('disabled');
-    $('input').removeAttr('disabled');
+    $('input,select,button').removeAttr('disabled');
 
     ready = true;
     invalidated = true;

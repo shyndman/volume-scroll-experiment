@@ -21,14 +21,28 @@
   <section id="controls">
     <label>
       <h4>Distance between videos:</h4>
-      <input id="video-distance" type="range" value="600" min="0" max="1000" disabled="disabled">
-      <span id="video-distance-display">600</span>
+      <input id="video-distance" type="range" value="400" min="0" max="1000" disabled="disabled">
+      <span id="video-distance-display">400</span>
     </label>
 
     <label>
       <h4>Audible distance:</h4>
-      <input id="audible-distance" type="range" value="600" min="0" max="1000" disabled="disabled">
-      <span id="audible-distance-display">600</span>
+      <input id="audible-distance" type="range" value="400" min="0" max="1000" disabled="disabled">
+      <span id="audible-distance-display">400</span>
+    </label>
+
+    <label>
+      <h4>Falloff function:</h4>
+      <select id="falloff-function" disabled="disabled">
+        <option>Linear</option>
+        <option>Exponential</option>
+        <option>Logarithmic</option>
+      </select>
+    </label>
+
+    <label>
+      <h4>Minimum volume:</h4>
+      <input id="min-volume" type="number" min="0" max="100" value="0">
     </label>
 
     <button id="begin" disabled="disabled">Begin Experiment</button>
