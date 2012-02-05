@@ -1,19 +1,13 @@
 (function() {
-  //
-  // Constants
-  //
 
   var VIDEO_WIDTH = 480;
   var VIDEO_HEIGHT = 300;
   var VIDEO_HALF_HEIGHT = VIDEO_HEIGHT / 2;
   var RECALCULATE_INTERVAL = 150;
-
-  // Define the videos to be displayed
-  // XXX consider pulling randomly from the API
   var VIDEO_IDS = [
-    "9JnjOb4Qu0k",
-    "-FpA77S7r7c",
-    "mQI6r_kc3ZE",
+    "9JnjOb4Qu0k", // Brushbot
+    "-FpA77S7r7c", // Andrew Bird
+    "mQI6r_kc3ZE", // Digital freedom
     "pmfHHLfbjNQ", // Big Ideas: Don't Get Any
     "9hBpF_Zj4OA"  // Rotate
   ];
@@ -27,10 +21,6 @@
     0.4
   ];
 
-
-  //
-  // Globals
-  //
 
   var ready = false;
   var readyCount = 0;
@@ -46,6 +36,7 @@
   var audibleDistanceDisplay = $('#audible-distance-display');
   var minVolumeCtrl = $('#min-volume');
   var minVolume = minVolumeCtrl.val();
+
 
   //
   // Volume control
@@ -146,6 +137,8 @@
 
   // Invoked when the begin button is pressed
   var beginPressed = function() {
+    $('#begin').hide();
+    $('#begun-message').show().delay(800).fadeOut();
     players.forEach(function(player) {
       player.playVideo();
     });
