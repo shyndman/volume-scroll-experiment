@@ -6,7 +6,7 @@
   var VIDEO_WIDTH = 480;
   var VIDEO_HEIGHT = 300;
   var VIDEO_HALF_HEIGHT = VIDEO_HEIGHT / 2;
-  var RECALCULATE_INTERVAL = 100;
+  var RECALCULATE_INTERVAL = 150;
 
   // Define the videos to be displayed
   // XXX consider pulling randomly from the API
@@ -24,7 +24,7 @@
     1.0,
     1.0,
     1.0,
-    0.2
+    0.4
   ];
 
 
@@ -33,6 +33,7 @@
   //
 
   var ready = false;
+  var readyCount = 0;
   var invalidated = false;
   var videoElements = [];
   var players = [];
@@ -57,8 +58,8 @@
     if (diff < 0)
       return minVolume;
 
-    var volume = Math.round(level * ((diff / audibleDistance) * (100 - minVolume) + minVolume));
-    return volume;
+
+    return Math.round(level * ((diff / audibleDistance) * (100 - minVolume) + minVolume));
   };
 
   // Determines the volume for each video based on distance from the screen.
@@ -185,20 +186,19 @@
 
     // All of the magic handled by SWFObject (http://code.google.com/p/swfobject/)
     swfobject.embedSWF("http://www.youtube.com/v/" + videoId + "?version=3&enablejsapi=1&loop=1&playlist=" + videoId + "&playerapiid=" + elementId,
-      playerId, VIDEO_WIDTH, VIDEO_HEIGHT, "9", null, null, params, attrs);
+      playerId, VIDEO_WIDTH, VIDEO_HEIGHT, "9", null, null, params, attrs, function() {
+        var element = document.getElementById(elementId);
+        videoElements.push(element)
+        players.push(element.querySelector('object'));
+      });
   };
 
   // Invoked each time a YouTube player is ready
   window.onYouTubePlayerReady = function(elementId) {
     console.log('Video ready: ' + elementId);
 
-    // Record the video for later access
-    var element = document.getElementById(elementId);
-    videoElements.push(element)
-    players.push(element.querySelector('object'));
-
     // Fire the all ready
-    if (players.length == VIDEO_IDS.length)
+    if (++readyCount == VIDEO_IDS.length)
       videosReady();
   };
 
